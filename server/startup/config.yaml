@@ -1,0 +1,61 @@
+# '*' can be used to prefix any REST endpoint for a value
+
+##########################################################################################
+# NOTE TO DEVELOPERS WHO WANT TO OVERRIDE SETTINGS ON THEIR DEV MACHINE ONLY:
+# If you want to override any of these settings on your local machine, do the following:
+# 1) create a file in this directory called 'config.local.yaml' (this file is in .gitignore file, so don't worry about committing it accidentally)
+#
+# 2) set it like so to start:
+# LOCAL:
+# <<                                              : *dev-base
+#
+# IMPORTANT NOTE: DO NOT ADD ANY NEW CONFIGURATIONS IN THIS FILE THAT ARE NOT ALREADY IN dev-base or base
+#
+# 3) override any settings in base or dev-base. If you override one item of a branch, you need to recreate
+#    the entire branch plus the setting. Example: to override the pageIdForCC setting, you need to keep the entire
+#    zuoraConnection branch, plus your override:
+#
+#zuoraConnection                                  :
+#   serviceUrl                                    : https://apisandbox-api.zuora.com/rest/
+#   soapServiceHost                               : https://apisandbox.zuora.com
+#   soapServicePath                               : /apps/services/a/64.0
+#   hostedPageUrl                                 : https://apisandbox.zuora.com/apps/PublicHostedPageLite.do
+#   secretKey                                     : XSW!@4oMEd
+#   clientId                                      : ascp@yp.com.zdev
+#   pageIdForACH                                  : 2c92c0f84a56e045014a5ebd85ab346e
+#   pageIdForCC                                   : <<changed value here>>
+#
+# 4) Set the NODE_ENV variable to "local" - NODE_ENV=local
+#
+# 5) run the application
+#
+##########################################################################################
+
+
+# global configurations common to all environments
+base: &base
+  queuedMessagePort                               : 3010
+  appPort                                         : 3000
+  longStack                                       : true
+  clientLogging                                   : true
+  doNotLog                                        :
+  publicStaticFolder                              : /server/modules/billing/client
+
+# configurations common to both dev and local
+dev-base: &dev-base
+  <<                                              : *base
+
+# configurations used by mocha unit test suite
+mocha:
+  <<                                              : *dev-base
+
+dev:
+  <<                                              : *dev-base
+
+test:
+  <<                                              : *base
+  longStack                                       : false
+
+production:
+  <<                                              : *base
+  longStack                                       : false
