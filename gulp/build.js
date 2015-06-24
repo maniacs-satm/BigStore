@@ -16,15 +16,23 @@ module.exports = function(options) {
     var cssFilter = $.filter('**/*.css');
     var sources = gulp.src([options.src + '/**/*.js', options.src + '/**/*.css'], {read: false});
 
-    var assets = $.useref.assets();
+    var assets;
     var wiredep = require('wiredep').stream;
 
-    return gulp.src(options.src + '/*.html')
-      .pipe($.inject(sources))
-      .pipe(assets)
-      .pipe(assets.restore())
-      .pipe($.useref())
-      .pipe(gulp.dest(options.dist + '/'));
+
+      return gulp.src(options.src + '/index.html')
+        .pipe($.inject(sources))
+        .pipe(assets = $.useref.assets({searchPath: './'}))
+        .pipe(cssFilter)
+        .pipe($.minifyCss())
+        .pipe(cssFilter.restore())
+        .pipe(jsFilter)
+        //.pipe($.uglify())
+        .pipe(jsFilter.restore())
+        .pipe(assets.restore())
+        .pipe($.useref())
+          .pipe(wiredep())
+        .pipe(gulp.dest(options.dist + '/'));
   });
 
   gulp.task('clean', function (done) {
